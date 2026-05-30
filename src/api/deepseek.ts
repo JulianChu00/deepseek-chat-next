@@ -1,10 +1,10 @@
 import type { ChatMessage, StreamCallbacks } from '../types/chat'
 
-const DEFAULT_API_KEY = 'sk-2a2484d9a11749439160d4df53e69b2e'
-
 function getApiKey(): string {
-  if (typeof window === 'undefined') return DEFAULT_API_KEY
-  return localStorage.getItem('deepseek_api_key') || DEFAULT_API_KEY
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem('deepseek_api_key') || process.env.NEXT_PUBLIC_DEEPSEEK_API_KEY || ''
+  }
+  return process.env.NEXT_PUBLIC_DEEPSEEK_API_KEY || ''
 }
 
 export function saveApiKey(key: string) {
