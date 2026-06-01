@@ -1,10 +1,10 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { marked } from 'marked'
 import hljs from 'highlight.js'
 import type { ChatMessage } from '../types/chat'
-import { User, Bot } from 'lucide-react'
+import { User, Bot, BookOpen, ChevronDown, ChevronUp } from 'lucide-react'
 
 marked.setOptions({ breaks: true, gfm: true })
 
@@ -24,6 +24,9 @@ interface Props {
 export default function ChatMessageComponent({ message }: Props) {
   const renderedContent = useMemo(() => renderMarkdown(message.content), [message.content])
   const isUser = message.role === 'user'
+  const [sourcesOpen, setSourcesOpen] = useState(false)
+
+  const hasSources = !isUser && message.knowledgeSources && message.knowledgeSources.length > 0
 
   return (
     <div className={`flex gap-3 py-4 ${isUser ? 'flex-row-reverse' : ''}`}>
@@ -60,6 +63,34 @@ export default function ChatMessageComponent({ message }: Props) {
             dangerouslySetInnerHTML={{ __html: renderedContent }}
           />
         ) : null}
+
+        {/* Knowledge Sources Badge */}
+        {hasSources && (
+          <div className="mt-2">
+            <button
+              onClick={() => setSourcesOpen(!sourcesOpen)}
+              className="inline-flex items-center gap-1 rounded-md border bg-muted/50 px-2 py-1 text-xs text-muted-foreground hover:bg-muted transition-colors"
+            >
+              <BookOpen className="h-3 w-3" />
+              基于 {message.knowledgeSources!.length} 个知识库片段
+              {sourcesOpen ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+            </button>
+
+            {sourcesOpen && (
+              <div className="mt-1 space-y-1">
+                {message.knowledgeSources!.map((s, i) => (
+                  <div key={i} className="rounded-md border bg-muted/30 p-2 text-xs">
+                    <div className="flex items-center gap-1.5 text-muted-foreground mb-0.5">
+                      <span className="font-medium">{s.filename}</span>
+                      <span className="opacity-50">相似度 {(s.score * 100).toFixed(0)}%</span>
+                    </div>
+                    <p className="text-muted-foreground leading-relaxed line-clamp-2">{s.content}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {message.isStreaming && (
           <span className="ml-0.5 inline-block h-4 w-0.5 animate-pulse bg-primary align-text-bottom" />

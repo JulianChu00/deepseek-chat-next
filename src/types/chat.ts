@@ -13,6 +13,13 @@ export interface ChatMessage {
   reasoningContent?: string
   timestamp: number
   isStreaming?: boolean
+  knowledgeSources?: KnowledgeSource[]
+}
+
+export interface KnowledgeSource {
+  filename: string
+  content: string
+  score: number
 }
 
 export interface ChatSession {

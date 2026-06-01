@@ -222,6 +222,15 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => {
               systemPrompt = `你是一个有帮助的助手。以下是用户知识库中与当前问题相关的参考内容，请优先根据这些内容回答。如果参考内容不相关，可自行回答。
 
 ${context}`
+
+              // 标记消息使用了知识库
+              updateLastAssistantMessage(sessionId, (msg) => {
+                msg.knowledgeSources = results.map((r) => ({
+                  filename: r.docFilename,
+                  content: r.chunk.content.slice(0, 200),
+                  score: Math.round(r.score * 100) / 100,
+                }))
+              })
             }
           } catch (err) {
             console.warn('知识库检索失败，将不附加参考内容:', err)
