@@ -1,4 +1,11 @@
-import type { ChatMessage, StreamCallbacks } from '../types/chat'
+import type { ChatMessage, ModelType } from '../types/chat'
+
+export interface StreamCallbacks {
+  onReasoning: (text: string) => void
+  onContent: (text: string) => void
+  onError: (error: Error) => void
+  onDone: () => void
+}
 
 function getApiKey(): string {
   if (typeof window !== 'undefined') {
@@ -14,7 +21,9 @@ export function saveApiKey(key: string) {
 export async function streamChat(
   messages: Pick<ChatMessage, 'role' | 'content'>[],
   callbacks: StreamCallbacks,
-  signal?: AbortSignal
+  model: ModelType,
+  signal?: AbortSignal,
+  systemPrompt?: string
 ): Promise<void> {
   const apiKey = getApiKey()
 
@@ -25,13 +34,14 @@ export async function streamChat(
       Authorization: `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
-      model: 'deepseek-v4-pro',
+      model,
       messages: [
-        { role: 'system', content: '你是一个有帮助的助手。' },
+        { role: 'system', content: systemPrompt || '你是一个有帮助的助手。' },
         ...messages,
       ],
-      thinking: { type: 'enabled' },
-      reasoning_effort: 'high',
+      ...(model === 'deepseek-reasoner'
+        ? {}
+        : { thinking: { type: 'enabled' }, reasoning_effort: 'high' }),
       stream: true,
     }),
     signal,

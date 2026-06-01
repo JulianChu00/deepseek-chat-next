@@ -1,3 +1,11 @@
+export type ModelType = 'deepseek-chat' | 'deepseek-reasoner' | 'deepseek-v4-pro'
+
+export const MODEL_OPTIONS: { value: ModelType; label: string }[] = [
+  { value: 'deepseek-v4-pro', label: 'DeepSeek V4 Pro' },
+  { value: 'deepseek-chat', label: 'DeepSeek V3' },
+  { value: 'deepseek-reasoner', label: 'DeepSeek R1' },
+]
+
 export interface ChatMessage {
   id: string
   role: 'user' | 'assistant' | 'system'

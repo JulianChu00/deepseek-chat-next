@@ -1,8 +1,10 @@
 'use client'
 
 import { create } from 'zustand'
-import type { ChatSession, ChatMessage } from '../types/chat'
+import type { ChatSession, ChatMessage, ModelType } from '../types/chat'
 import { streamChat, saveApiKey } from '../api/deepseek'
+import { singleEmbed } from '../api/embedding'
+import { searchChunks } from '../utils/vector'
 
 function generateId(): string {
   return Date.now().toString(36) + Math.random().toString(36).slice(2)
@@ -24,6 +26,7 @@ interface ChatState {
   activeSessionId: string
   apiKey: string
   isStreaming: boolean
+  model: ModelType
 }
 
 interface ChatActions {
@@ -32,6 +35,7 @@ interface ChatActions {
   deleteSession: (id: string) => void
   switchSession: (id: string) => void
   setApiKey: (key: string) => void
+  setModel: (model: ModelType) => void
   sendMessage: (content: string) => Promise<void>
   retryLastMessage: () => Promise<void>
   stopGeneration: () => void
@@ -42,6 +46,10 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => {
 
   function persistSessions() {
     localStorage.setItem('deepseek_sessions', JSON.stringify(get().sessions))
+  }
+
+  function persistModel(model: ModelType) {
+    localStorage.setItem('deepseek_model', model)
   }
 
   function addMessage(sessionId: string, msg: ChatMessage) {
@@ -79,11 +87,21 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => {
     })
   }
 
+  function getInitialModel(): ModelType {
+    if (typeof window === 'undefined') return 'deepseek-v4-pro'
+    const saved = localStorage.getItem('deepseek_model')
+    if (saved === 'deepseek-chat' || saved === 'deepseek-reasoner' || saved === 'deepseek-v4-pro') {
+      return saved
+    }
+    return 'deepseek-v4-pro'
+  }
+
   return {
     sessions: [],
     activeSessionId: '',
     apiKey: typeof window !== 'undefined' ? localStorage.getItem('deepseek_api_key') || '' : '',
     isStreaming: false,
+    model: getInitialModel(),
 
     initSessions: () => {
       const saved = localStorage.getItem('deepseek_sessions')
@@ -142,6 +160,11 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => {
       saveApiKey(key)
     },
 
+    setModel: (model: ModelType) => {
+      set({ model })
+      persistModel(model)
+    },
+
     sendMessage: async (content: string) => {
       const sessionId = get().activeSessionId
       if (!sessionId || !content.trim()) return
@@ -172,7 +195,41 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => {
         .filter((m) => m.role !== 'system' && m.id !== assistantMsg.id)
         .map((m) => ({ role: m.role, content: m.content }))
 
+      const model = get().model
       let hasReasoning = false
+
+      // ---- 知识库检索 ----
+      let systemPrompt = '你是一个有帮助的助手。'
+
+      try {
+        // 延迟导入避免循环依赖
+        const { useKnowledgeStore } = await import('./useKnowledgeStore')
+        const knowledgeDocs = useKnowledgeStore.getState().docs
+
+        if (knowledgeDocs.length > 0) {
+          try {
+            const queryEmbedding = await singleEmbed(content.trim())
+            const results = searchChunks(queryEmbedding, knowledgeDocs, 5, 0.3)
+
+            if (results.length > 0) {
+              const context = results
+                .map(
+                  (r, i) =>
+                    `[参考片段 ${i + 1} - 来源: ${r.docFilename}]\n${r.chunk.content}`
+                )
+                .join('\n\n---\n\n')
+
+              systemPrompt = `你是一个有帮助的助手。以下是用户知识库中与当前问题相关的参考内容，请优先根据这些内容回答。如果参考内容不相关，可自行回答。
+
+${context}`
+            }
+          } catch (err) {
+            console.warn('知识库检索失败，将不附加参考内容:', err)
+          }
+        }
+      } catch (err) {
+        console.warn('加载知识库失败:', err)
+      }
 
       try {
         await streamChat(
@@ -210,7 +267,9 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => {
               set({ isStreaming: false })
             },
           },
-          abortController.signal
+          model,
+          abortController.signal,
+          systemPrompt
         )
       } catch (error: any) {
         if (error.name === 'AbortError') {
