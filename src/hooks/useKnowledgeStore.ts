@@ -3,7 +3,6 @@
 import { create } from 'zustand'
 import type { KnowledgeDoc } from '../types/knowledge'
 import { splitText } from '../utils/chunking'
-import { batchEmbed } from '../api/embedding'
 
 function generateId(): string {
   return Date.now().toString(36) + Math.random().toString(36).slice(2)
@@ -113,6 +112,7 @@ export const useKnowledgeStore = create<KnowledgeState & KnowledgeActions>((set,
     for (let i = 0; i < chunkTexts.length; i += BATCH_SIZE) {
       const batch = chunkTexts.slice(i, i + BATCH_SIZE)
       set({ processingStatus: `正在向量化... (${i + 1}/${chunkTexts.length})` })
+      const { batchEmbed } = await import("../api/embedding")
       const embeddings = await batchEmbed(batch)
       allEmbeddings.push(...embeddings)
     }

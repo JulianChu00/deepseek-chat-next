@@ -18,6 +18,9 @@ export async function batchEmbed(texts: string[]): Promise<number[][]> {
 
   for (const text of texts) {
     const output = await pipe(text, { pooling: 'mean', normalize: true })
+    if (!output || !output.data) {
+      throw new Error('Embedding model returned empty result')
+    }
     results.push(Array.from(output.data))
   }
 

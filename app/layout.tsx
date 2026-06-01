@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Script from 'next/script'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -13,10 +14,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="zh-CN" suppressHydrationWarning>
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){
+      <head />
+      <body className="antialiased">
+        <Script id="theme-init" strategy="beforeInteractive">
+          {`(function(){
   try {
     var t = localStorage.getItem('deepseek_theme');
     if (t === 'dark') {
@@ -27,11 +28,10 @@ export default function RootLayout({
       document.documentElement.classList.add('dark');
     }
   } catch(e) {}
-})()`,
-          }}
-        />
-      </head>
-      <body className="antialiased">{children}</body>
+})()`}
+        </Script>
+        {children}
+      </body>
     </html>
   )
 }

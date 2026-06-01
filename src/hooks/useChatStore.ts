@@ -3,7 +3,6 @@
 import { create } from 'zustand'
 import type { ChatSession, ChatMessage, ModelType } from '../types/chat'
 import { streamChat, saveApiKey } from '../api/deepseek'
-import { singleEmbed } from '../api/embedding'
 import { searchChunks } from '../utils/vector'
 
 function generateId(): string {
@@ -208,6 +207,7 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => {
 
         if (knowledgeDocs.length > 0) {
           try {
+            const { singleEmbed } = await import("../api/embedding")
             const queryEmbedding = await singleEmbed(content.trim())
             const results = searchChunks(queryEmbedding, knowledgeDocs, 5, 0.3)
 
