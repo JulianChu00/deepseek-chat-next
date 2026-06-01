@@ -95,7 +95,7 @@ export const useKnowledgeStore = create<KnowledgeState & KnowledgeActions>((set,
   },
 
   addTextDocument: async (filename: string, text: string) => {
-    set({ isProcessing: true, processingStatus: `正在分块 "${filename}"...` })
+    set({ isProcessing: true, processingStatus: `首次使用会下载约25MB模型，之后离线运行。正在分块 "${filename}"...` })
 
     const chunkTexts = splitText(text)
 
