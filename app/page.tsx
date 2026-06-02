@@ -38,7 +38,7 @@ export default function Home() {
         </div>
       )}
 
-      {/* Main Chat Area */}
+      {/* Main Area */}
       <div className="flex flex-1 min-w-0">
         <ChatMain
           sidebarOpen={sidebarOpen}
@@ -46,11 +46,18 @@ export default function Home() {
           knowledgeOpen={knowledgeOpen}
           onToggleKnowledge={() => setKnowledgeOpen(!knowledgeOpen)}
         />
+
+        {/* Desktop: inline knowledge panel, same as sidebar behavior */}
+        {knowledgeOpen && (
+          <div className="hidden w-72 shrink-0 border-l md:flex">
+            <KnowledgePanel onClose={() => setKnowledgeOpen(false)} />
+          </div>
+        )}
       </div>
 
-      {/* Knowledge Drawer */}
+      {/* Mobile: Sheet Drawer */}
       <Sheet open={knowledgeOpen} onOpenChange={setKnowledgeOpen}>
-        <SheetContent side="right" className="w-80 sm:w-96 p-0">
+        <SheetContent side="right" className="w-80 p-0 md:hidden">
           <KnowledgePanel onClose={() => setKnowledgeOpen(false)} />
         </SheetContent>
       </Sheet>
