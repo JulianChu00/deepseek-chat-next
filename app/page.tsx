@@ -64,6 +64,7 @@ export default function Home() {
       {/* Chat Area */}
       <div className="flex flex-1 min-w-0">
         <ChatMain
+          sidebarCollapsed={sidebarCollapsed}
           sidebarOpen={sidebarMobileOpen || !sidebarCollapsed}
           onToggleSidebar={isMobile ? toggleMobileSidebar : toggleDesktopSidebar}
           knowledgeOpen={knowledgeOpen}

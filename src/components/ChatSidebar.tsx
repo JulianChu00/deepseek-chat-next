@@ -6,7 +6,7 @@ import { MODEL_OPTIONS } from '../types/chat'
 import { Button } from './ui/button'
 import { ScrollArea } from './ui/scroll-area'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
-import { Plus, Trash2, Sun, Moon, MessageSquare, Sparkles, PanelLeft } from 'lucide-react'
+import { Plus, Trash2, Sun, Moon, MessageSquare, Sparkles, Menu } from 'lucide-react'
 
 export default function ChatSidebar({ onToggleCollapse }: { onToggleCollapse?: () => void }) {
   const sessions = useChatStore((s) => s.sessions)
@@ -23,15 +23,22 @@ export default function ChatSidebar({ onToggleCollapse }: { onToggleCollapse?: (
   const sortedSessions = [...sessions].sort((a, b) => b.updatedAt - a.updatedAt)
 
   return (
-    <div className="flex h-full flex-col border-r bg-background">
-      <div className="flex items-center gap-2 px-4 py-4">
+    <div className="flex h-full flex-col bg-background">
+      {/* Collapse button row - same height as ChatMain topbar */}
+      {onToggleCollapse && (
+        <div className="flex items-center border-b px-2 py-1.5">
+          <button
+            onClick={onToggleCollapse}
+            className="flex h-8 w-8 items-center justify-center rounded hover:bg-accent"
+          >
+            <Menu className="h-4 w-4" />
+          </button>
+        </div>
+      )}
+
+      <div className="flex items-center gap-2 px-4 py-3">
         <Sparkles className="h-5 w-5 text-primary" />
         <span className="flex-1 font-semibold">DeepSeek Chat</span>
-        {onToggleCollapse && (
-          <button onClick={onToggleCollapse} className="rounded p-1 hover:bg-accent hidden md:flex">
-            <PanelLeft className="h-4 w-4" />
-          </button>
-        )}
       </div>
 
       <div className="px-3 pb-3">
