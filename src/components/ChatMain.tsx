@@ -92,7 +92,7 @@ export default function ChatMain({ sidebarOpen, onToggleSidebar, knowledgeOpen, 
   return (
     <div className="flex flex-1 flex-col min-w-0">
       {/* Top bar */}
-      <div className="flex items-center gap-2 border-b px-4 py-2">
+      <div className="flex items-center gap-1 border-b px-2 py-1.5 sm:px-4 sm:py-2">
         <Button variant="ghost" size="icon" className="h-8 w-8 md:hidden" onClick={onToggleSidebar}>
           <Menu className="h-4 w-4" />
         </Button>
@@ -151,7 +151,7 @@ export default function ChatMain({ sidebarOpen, onToggleSidebar, knowledgeOpen, 
             <p className="text-sm text-muted-foreground">开始和 DeepSeek 对话吧</p>
           </div>
         ) : (
-          <div className="mx-auto max-w-3xl px-4">
+          <div className="mx-auto max-w-3xl px-2 sm:px-4">
             {activeSession.messages.map((msg) => (
               <ChatMessageComponent key={msg.id} message={msg} />
             ))}
@@ -160,7 +160,7 @@ export default function ChatMain({ sidebarOpen, onToggleSidebar, knowledgeOpen, 
       </div>
 
       {/* Input */}
-      <div className="border-t p-4">
+      <div className="border-t p-2 sm:p-4">
         <div className="mx-auto flex max-w-3xl gap-2">
           <Textarea
             value={inputText}
