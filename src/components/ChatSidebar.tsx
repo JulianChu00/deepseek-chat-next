@@ -24,21 +24,17 @@ export default function ChatSidebar({ onToggleCollapse }: { onToggleCollapse?: (
 
   return (
     <div className="flex h-full flex-col bg-background">
-      {/* Collapse button row - same height as ChatMain topbar */}
-      {onToggleCollapse && (
-        <div className="flex items-center border-b px-2 py-1.5">
-          <button
-            onClick={onToggleCollapse}
-            className="flex h-8 w-8 items-center justify-center rounded hover:bg-accent"
-          >
-            <Menu className="h-4 w-4" />
-          </button>
-        </div>
-      )}
-
       <div className="flex items-center gap-2 px-4 py-3">
         <Sparkles className="h-5 w-5 text-primary" />
         <span className="flex-1 font-semibold">DeepSeek Chat</span>
+        {onToggleCollapse && (
+          <button
+            onClick={onToggleCollapse}
+            className="-mr-1 flex h-7 w-7 items-center justify-center rounded hover:bg-accent"
+          >
+            <Menu className="h-4 w-4" />
+          </button>
+        )}
       </div>
 
       <div className="px-3 pb-3">
