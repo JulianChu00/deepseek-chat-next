@@ -108,7 +108,7 @@ export default function ChatMain({ sidebarOpen, onToggleSidebar, knowledgeOpen, 
             onClick={onToggleKnowledge}
           >
             <Library className="h-3.5 w-3.5" />
-            知识库
+            <span className="hidden sm:inline">知识库</span>
             {knowledgeChunkCount > 0 && (
               <span className="rounded-full bg-primary px-1.5 py-0 text-[10px] font-medium text-primary-foreground">
                 {knowledgeChunkCount}
@@ -118,14 +118,14 @@ export default function ChatMain({ sidebarOpen, onToggleSidebar, knowledgeOpen, 
 
           {activeSession.messages.length > 0 && (
             <>
-              <span className="rounded-full bg-secondary px-2 py-0.5 text-xs text-muted-foreground">
+              <span className="hidden rounded-full bg-secondary px-2 py-0.5 text-xs text-muted-foreground sm:inline">
                 ≈{tokenCount}t
               </span>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="sm" className="gap-1.5">
                     <Download className="h-3.5 w-3.5" />
-                    导出
+                    <span className="hidden sm:inline">导出</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
