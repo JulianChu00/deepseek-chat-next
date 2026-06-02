@@ -71,10 +71,7 @@ export default function Home() {
 
       {isMobile && (
         <Sheet open={knowledgeOpen} onOpenChange={setKnowledgeOpen}>
-          <SheetContent side="right" className="w-[85vw] p-0 flex flex-col">
-            <div className="flex items-center justify-between border-b px-4 py-3">
-              <span className="text-sm font-semibold">知识库</span>
-            </div>
+          <SheetContent side="right" className="w-[85vw] p-4">
             <KnowledgePanel />
           </SheetContent>
         </Sheet>

@@ -56,7 +56,7 @@ export default function KnowledgePanel() {
   const totalChunks = docs.reduce((s, d) => s + d.chunks.length, 0)
 
   return (
-    <div className="h-full overflow-y-auto px-4 py-4">
+    <div className="h-full overflow-y-auto px-4 py-3">
       <div className="space-y-4">
         <div className="space-y-2">
           <label className="text-xs font-medium text-muted-foreground">上传文档</label>
