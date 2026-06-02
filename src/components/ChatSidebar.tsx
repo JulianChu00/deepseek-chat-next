@@ -38,7 +38,7 @@ export default function ChatSidebar({ onToggleCollapse }: { onToggleCollapse?: (
 
       <div className="flex-1 overflow-y-auto">
         <div className="space-y-0.5 px-2">
-          <Button variant="outline" className="w-full justify-start gap-2 px-3" onClick={() => createSession()}>
+          <Button variant="outline" className="w-full justify-start gap-2 pl-[9px] pr-3" onClick={() => createSession()}>
             <Plus className="h-4 w-4" />
             新建对话
           </Button>
