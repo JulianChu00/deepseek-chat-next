@@ -97,11 +97,11 @@ const sessions = useChatStore((s) => s.sessions)
         <Button
           variant="ghost"
           size="icon"
-          className="h-8 w-8"
+          className={`h-8 overflow-hidden transition-all duration-300 ${sidebarCollapsed ? 'w-8' : 'w-0'}`}
           onClick={onToggleSidebar}
           disabled={!sidebarCollapsed}
         >
-          <Menu className={`h-4 w-4 transition-opacity duration-300 ${sidebarCollapsed ? 'opacity-100' : 'opacity-0'}`} />
+          <Menu className="h-4 w-4" />
         </Button>
         <span className="flex-1 truncate text-sm text-muted-foreground">
           {activeSession.title}
