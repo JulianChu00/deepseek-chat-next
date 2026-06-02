@@ -93,7 +93,7 @@ export default function ChatMain({ sidebarOpen, onToggleSidebar, knowledgeOpen, 
     <div className="flex flex-1 flex-col min-w-0">
       {/* Top bar */}
       <div className="flex items-center gap-1 border-b px-2 py-1.5 sm:px-4 sm:py-2">
-        <Button variant="ghost" size="icon" className="h-8 w-8 md:hidden" onClick={onToggleSidebar}>
+        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onToggleSidebar}>
           <Menu className="h-4 w-4" />
         </Button>
         <span className="flex-1 truncate text-sm text-muted-foreground">
