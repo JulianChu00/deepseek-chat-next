@@ -4,7 +4,6 @@ import { useChatStore } from '../hooks/useChatStore'
 import { useThemeStore } from '../hooks/useThemeStore'
 import { MODEL_OPTIONS } from '../types/chat'
 import { Button } from './ui/button'
-import { ScrollArea } from './ui/scroll-area'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
 import { Plus, Trash2, Sun, Moon, MessageSquare, Sparkles, Menu } from 'lucide-react'
 
@@ -37,15 +36,12 @@ export default function ChatSidebar({ onToggleCollapse }: { onToggleCollapse?: (
         )}
       </div>
 
-      <div className="px-2 pb-3">
-        <Button variant="outline" className="w-full justify-start gap-2 px-3" onClick={() => createSession()}>
-          <Plus className="h-4 w-4" />
-          新建对话
-        </Button>
-      </div>
-
-      <ScrollArea className="flex-1 px-2">
-        <div className="space-y-0.5">
+      <div className="flex-1 overflow-y-auto">
+        <div className="space-y-0.5 px-2">
+          <Button variant="outline" className="w-full justify-start gap-2 px-3" onClick={() => createSession()}>
+            <Plus className="h-4 w-4" />
+            新建对话
+          </Button>
           {sortedSessions.map((s) => (
             <button
               key={s.id}
@@ -70,7 +66,7 @@ export default function ChatSidebar({ onToggleCollapse }: { onToggleCollapse?: (
             </button>
           ))}
         </div>
-      </ScrollArea>
+      </div>
 
       <div className="flex flex-col gap-2 border-t p-3">
         <Select value={model} onValueChange={(v) => setModel(v as typeof model)}>
