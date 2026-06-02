@@ -6,6 +6,7 @@ import ChatMain from '../src/components/ChatMain'
 import KnowledgePanel from '../src/components/KnowledgePanel'
 import { useChatStore } from '../src/hooks/useChatStore'
 import { useKnowledgeStore } from '../src/hooks/useKnowledgeStore'
+import { Sheet, SheetContent } from '../src/components/ui/sheet'
 
 export default function Home() {
   const initSessions = useChatStore((s) => s.initSessions)
@@ -45,12 +46,14 @@ export default function Home() {
           knowledgeOpen={knowledgeOpen}
           onToggleKnowledge={() => setKnowledgeOpen(!knowledgeOpen)}
         />
-
-        {/* Knowledge Panel */}
-        {knowledgeOpen && (
-          <KnowledgePanel onClose={() => setKnowledgeOpen(false)} />
-        )}
       </div>
+
+      {/* Knowledge Drawer */}
+      <Sheet open={knowledgeOpen} onOpenChange={setKnowledgeOpen}>
+        <SheetContent side="right" className="w-80 sm:w-96 p-0">
+          <KnowledgePanel onClose={() => setKnowledgeOpen(false)} />
+        </SheetContent>
+      </Sheet>
     </div>
   )
 }

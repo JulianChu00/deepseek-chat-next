@@ -63,7 +63,7 @@ export default function KnowledgePanel({ onClose }: Props) {
   const totalChunks = docs.reduce((s, d) => s + d.chunks.length, 0)
 
   return (
-    <div className="flex h-full w-72 shrink-0 flex-col border-l bg-background">
+    <div className="flex h-full flex-col bg-background">
       <div className="flex items-center justify-between border-b px-4 py-3">
         <span className="text-sm font-semibold">知识库</span>
         <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onClose}>

@@ -146,14 +146,18 @@ export const useKnowledgeStore = create<KnowledgeState & KnowledgeActions>((set,
     set({ isProcessing: true, processingStatus: `正在抓取 ${url}...` })
 
     try {
-      const response = await fetch(url)
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: 无法抓取该页面`)
+      const res = await fetch('/api/fetch-url', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        throw new Error(data.error || `HTTP ${res.status}`)
       }
-      const html = await response.text()
 
       // Simple HTML text extraction
-      const doc = new DOMParser().parseFromString(html, 'text/html')
+      const doc = new DOMParser().parseFromString(data.html, 'text/html')
       doc.querySelectorAll('script, style, nav, footer, header, noscript').forEach((e) => e.remove())
       const text = doc.body?.textContent?.replace(/\s{3,}/g, '\n\n').trim() || ''
 
