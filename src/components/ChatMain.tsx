@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useRef, useEffect, useMemo } from 'react'
+import { useState, useRef, useEffect, useMemo, useCallback } from 'react'
+import { Virtuoso, type VirtuosoHandle } from 'react-virtuoso'
 import { useChatStore } from '../hooks/useChatStore'
 import { useKnowledgeStore } from '../hooks/useKnowledgeStore'
 import ChatMessageComponent from './ChatMessage'
@@ -25,7 +26,7 @@ interface Props {
 }
 
 export default function ChatMain({ sidebarOpen, onToggleSidebar, sidebarCollapsed, knowledgeOpen, onToggleKnowledge }: Props) {
-const sessions = useChatStore((s) => s.sessions)
+  const sessions = useChatStore((s) => s.sessions)
   const activeSessionId = useChatStore((s) => s.activeSessionId)
   const isStreaming = useChatStore((s) => s.isStreaming)
   const sendMessage = useChatStore((s) => s.sendMessage)
@@ -34,7 +35,8 @@ const sessions = useChatStore((s) => s.sessions)
 
   const activeSession = sessions.find((s) => s.id === activeSessionId) || null
   const [inputText, setInputText] = useState('')
-  const chatContainerRef = useRef<HTMLDivElement>(null)
+  const virtuosoRef = useRef<VirtuosoHandle>(null)
+  const [atBottom, setAtBottom] = useState(true)
 
   const tokenCount = useMemo(
     () => (activeSession ? countSessionTokens(activeSession.messages) : 0),
@@ -45,14 +47,6 @@ const sessions = useChatStore((s) => s.sessions)
     () => knowledgeDocs.reduce((sum, d) => sum + d.chunks.length, 0),
     [knowledgeDocs]
   )
-
-  useEffect(() => {
-    requestAnimationFrame(() => {
-      if (chatContainerRef.current) {
-        chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight
-      }
-    })
-  }, [activeSession?.messages, activeSessionId])
 
   useEffect(() => {
     setInputText('')
@@ -73,14 +67,23 @@ const sessions = useChatStore((s) => s.sessions)
   }
 
   async function handleExportImage() {
-    if (!chatContainerRef.current) return
-    await exportToImage(chatContainerRef.current)
+    // Virtual list doesn't render all items; export current viewport only
+    const el = document.querySelector('[data-virtuoso-scroller]') as HTMLElement
+    if (!el) return
+    await exportToImage(el)
   }
 
   function handleExportMarkdown() {
     if (!activeSession) return
     exportToMarkdown(activeSession.messages, activeSession.title)
   }
+
+  const messages = activeSession?.messages ?? []
+
+  // Detect when user scrolls away to stop auto-scroll
+  const handleAtBottomStateChange = useCallback((bottom: boolean) => {
+    setAtBottom(bottom)
+  }, [])
 
   if (!activeSession) {
     return (
@@ -151,18 +154,26 @@ const sessions = useChatStore((s) => s.sessions)
         </div>
       </div>
 
-      {/* Messages */}
-      <div ref={chatContainerRef} className="flex-1 overflow-y-auto">
-        {activeSession.messages.length === 0 ? (
+      {/* Messages - Virtual List */}
+      <div className="flex-1 min-h-0">
+        {messages.length === 0 ? (
           <div className="flex h-full items-center justify-center">
             <p className="text-sm text-muted-foreground">开始和 DeepSeek 对话吧</p>
           </div>
         ) : (
-          <div className="mx-auto max-w-3xl px-2 sm:px-4">
-            {activeSession.messages.map((msg) => (
-              <ChatMessageComponent key={msg.id} message={msg} />
-            ))}
-          </div>
+          <Virtuoso
+            ref={virtuosoRef}
+            data={messages}
+            followOutput={isStreaming || atBottom ? 'smooth' : false}
+            atBottomStateChange={handleAtBottomStateChange}
+            initialTopMostItemIndex={messages.length - 1}
+            itemContent={(index, msg) => (
+              <div className="mx-auto max-w-3xl px-2 sm:px-4">
+                <ChatMessageComponent message={msg} />
+              </div>
+            )}
+            style={{ height: '100%' }}
+          />
         )}
       </div>
 
