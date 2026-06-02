@@ -164,7 +164,7 @@ export default function ChatMain({ sidebarOpen, onToggleSidebar, sidebarCollapse
           <Virtuoso
             ref={virtuosoRef}
             data={messages}
-            followOutput={isStreaming || atBottom ? 'smooth' : false}
+            followOutput={isStreaming ? 'auto' : (atBottom ? 'smooth' : false)}
             atBottomStateChange={handleAtBottomStateChange}
             initialTopMostItemIndex={messages.length - 1}
             itemContent={(index, msg) => (
