@@ -4,10 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useKnowledgeStore } from '../hooks/useKnowledgeStore'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
-import { ScrollArea } from './ui/scroll-area'
-import {
-  Upload, Globe, Trash2, Paperclip, Loader2, AlertCircle, CheckCircle2,
-} from 'lucide-react'
+import { X, Upload, Globe, Trash2, Paperclip, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react'
 
 interface Props {
   onClose: () => void
@@ -64,9 +61,15 @@ export default function KnowledgePanel({ onClose }: Props) {
 
   return (
     <div className="flex h-full flex-col bg-background">
-      <ScrollArea className="flex-1">
-        <div className="space-y-4 p-4">
-          {/* Upload */}
+      <div className="flex items-center justify-between border-b px-4 py-3">
+        <span className="text-sm font-semibold">知识库</span>
+        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onClose}>
+          <X className="h-4 w-4" />
+        </Button>
+      </div>
+
+      <div className="flex-1 overflow-y-auto px-4 py-4">
+        <div className="space-y-4">
           <div className="space-y-2">
             <label className="text-xs font-medium text-muted-foreground">上传文档</label>
             <input ref={fileInputRef} type="file" accept=".txt,.md,.pdf,.json,.csv,.html,.py,.js,.ts,.tsx,.css,.yaml,.yml" onChange={handleFileUpload} className="hidden" disabled={isProcessing} />
@@ -77,7 +80,6 @@ export default function KnowledgePanel({ onClose }: Props) {
             <p className="text-xs text-muted-foreground">TXT, MD, PDF, 代码等</p>
           </div>
 
-          {/* URL */}
           <div className="space-y-2">
             <label className="text-xs font-medium text-muted-foreground">抓取网页</label>
             <div className="flex gap-2">
@@ -89,7 +91,6 @@ export default function KnowledgePanel({ onClose }: Props) {
             </div>
           </div>
 
-          {/* Status */}
           {isProcessing && (
             <div className="flex items-center gap-2 rounded-md bg-muted px-3 py-2 text-xs">
               <Loader2 className="h-3.5 w-3.5 animate-spin shrink-0" />
@@ -103,7 +104,6 @@ export default function KnowledgePanel({ onClose }: Props) {
             </div>
           )}
 
-          {/* Doc list */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-xs font-medium text-muted-foreground">
@@ -135,7 +135,7 @@ export default function KnowledgePanel({ onClose }: Props) {
             )}
           </div>
         </div>
-      </ScrollArea>
+      </div>
     </div>
   )
 }
