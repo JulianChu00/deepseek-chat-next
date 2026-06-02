@@ -9,6 +9,7 @@ import { useKnowledgeStore } from '../src/hooks/useKnowledgeStore'
 import { Sheet, SheetContent } from '../src/components/ui/sheet'
 import { Button } from '../src/components/ui/button'
 import { X } from 'lucide-react'
+import { ErrorBoundary } from '../src/components/ErrorBoundary'
 
 export default function Home() {
   const initSessions = useChatStore((s) => s.initSessions)
@@ -39,6 +40,7 @@ export default function Home() {
   }, [])
 
   return (
+    <ErrorBoundary>
     <div className="flex h-screen overflow-hidden">
       {/* Desktop Sidebar */}
       <div
@@ -98,5 +100,6 @@ export default function Home() {
         </Sheet>
       )}
     </div>
+    </ErrorBoundary>
   )
 }

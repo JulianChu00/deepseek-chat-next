@@ -240,22 +240,27 @@ ${context}`
         console.warn('加载知识库失败:', err)
       }
 
+      const isCancelled = () => abortController?.signal.aborted
+
       try {
         await streamChat(
           contextMessages,
           {
             onReasoning(text) {
+              if (isCancelled()) return
               hasReasoning = true
               updateLastAssistantMessage(sessionId, (msg) => {
                 msg.reasoningContent = (msg.reasoningContent || '') + text
               })
             },
             onContent(text) {
+              if (isCancelled()) return
               updateLastAssistantMessage(sessionId, (msg) => {
                 msg.content += text
               })
             },
             onError(error) {
+              if (isCancelled()) return
               updateLastAssistantMessage(sessionId, (msg) => {
                 msg.content = `错误：${error.message}`
                 msg.isStreaming = false
@@ -264,6 +269,7 @@ ${context}`
               set({ isStreaming: false })
             },
             onDone() {
+              if (isCancelled()) return
               updateLastAssistantMessage(sessionId, (msg) => {
                 msg.isStreaming = false
               })

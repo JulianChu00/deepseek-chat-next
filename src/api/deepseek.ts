@@ -18,6 +18,27 @@ export function saveApiKey(key: string) {
   localStorage.setItem('deepseek_api_key', key)
 }
 
+async function fetchWithRetry(
+  url: string,
+  init: RequestInit,
+  retries = 2
+): Promise<Response> {
+  let lastError: Error | null = null
+  for (let i = 0; i < retries; i++) {
+    try {
+      const response = await fetch(url, init)
+      if (response.ok || response.status < 500) return response
+      throw new Error(`HTTP ${response.status}`)
+    } catch (err: any) {
+      lastError = err
+      if (err.name === 'AbortError') throw err
+      if (i === retries - 1) throw err
+      await new Promise((r) => setTimeout(r, 1000))
+    }
+  }
+  throw lastError
+}
+
 export async function streamChat(
   messages: Pick<ChatMessage, 'role' | 'content'>[],
   callbacks: StreamCallbacks,
@@ -27,25 +48,28 @@ export async function streamChat(
 ): Promise<void> {
   const apiKey = getApiKey()
 
-  const response = await fetch('https://api.deepseek.com/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      model,
-      messages: [
-        { role: 'system', content: systemPrompt || '你是一个有帮助的助手。' },
-        ...messages,
-      ],
-      ...(model === 'deepseek-reasoner'
-        ? {}
-        : { thinking: { type: 'enabled' }, reasoning_effort: 'high' }),
-      stream: true,
-    }),
-    signal,
-  })
+  const response = await fetchWithRetry(
+    'https://api.deepseek.com/chat/completions',
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model,
+        messages: [
+          { role: 'system', content: systemPrompt || '你是一个有帮助的助手。' },
+          ...messages,
+        ],
+        ...(model === 'deepseek-reasoner'
+          ? {}
+          : { thinking: { type: 'enabled' }, reasoning_effort: 'high' }),
+        stream: true,
+      }),
+      signal,
+    }
+  )
 
   if (!response.ok) {
     const err = await response.json().catch(() => ({}))

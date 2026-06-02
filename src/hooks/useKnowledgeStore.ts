@@ -241,13 +241,8 @@ function looksLikeBinary(text: string): boolean {
 }
 
 async function readPdfContent(file: File): Promise<string> {
-  // Use pdf-parse-lib or similar; for now, provide basic PDF text extraction via pdf.js
-  // @ts-ignore
-  const pdfjs = await import('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.min.mjs')
-  const { getDocument, GlobalWorkerOptions }: any = pdfjs
-
-  GlobalWorkerOptions.workerSrc =
-    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.worker.min.mjs'
+  const pdfjs = await import('pdfjs-dist')
+  const { getDocument } = pdfjs
 
   const arrayBuffer = await file.arrayBuffer()
   const pdf = await getDocument({ data: arrayBuffer }).promise

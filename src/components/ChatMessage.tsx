@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import { marked } from 'marked'
+import DOMPurify from 'dompurify'
 import hljs from 'highlight.js'
 import type { ChatMessage } from '../types/chat'
 import { User, Bot, BookOpen, ChevronDown, ChevronUp } from 'lucide-react'
@@ -22,7 +23,10 @@ interface Props {
 }
 
 export default function ChatMessageComponent({ message }: Props) {
-  const renderedContent = useMemo(() => renderMarkdown(message.content), [message.content])
+  const renderedContent = useMemo(() => {
+    const html = renderMarkdown(message.content)
+    return DOMPurify.sanitize(html, { ADD_ATTR: ['target'] })
+  }, [message.content])
   const isUser = message.role === 'user'
   const [sourcesOpen, setSourcesOpen] = useState(false)
 
