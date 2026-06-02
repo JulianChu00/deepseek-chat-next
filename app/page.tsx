@@ -38,13 +38,13 @@ export default function Home() {
     }
   }, [isMobile])
 
-  const sidebarWidth = sidebarCollapsed ? 'w-0' : 'w-64'
-
   return (
-    <div className="flex h-screen overflow-hidden">
-      {/* Desktop Sidebar with animation */}
+    <div className="flex h-screen overflow-hidden bg-background">
+      {/* Desktop Sidebar - slides over chat */}
       <div
-        className={`hidden md:block shrink-0 overflow-hidden border-r transition-all duration-300 ${sidebarWidth}`}
+        className={`fixed left-0 top-0 z-30 hidden h-full w-64 border-r bg-background shadow-lg transition-transform duration-300 md:block ${
+          sidebarCollapsed ? '-translate-x-full' : 'translate-x-0'
+        }`}
       >
         <ChatSidebar />
       </div>
@@ -59,8 +59,8 @@ export default function Home() {
         </div>
       )}
 
-      {/* Main Area */}
-      <div className="flex flex-1 min-w-0">
+      {/* Main Chat - always full width */}
+      <div className="flex flex-1 min-w-0 relative">
         <ChatMain
           sidebarOpen={sidebarMobileOpen}
           onToggleSidebar={handleSidebarToggle}
@@ -68,19 +68,21 @@ export default function Home() {
           onToggleKnowledge={handleKnowledgeToggle}
         />
 
-        {/* Desktop Knowledge Panel with slide animation */}
+        {/* Desktop Knowledge Panel - slides over chat */}
         <div
-          className={`hidden md:flex shrink-0 flex-col border-l bg-background overflow-hidden transition-all duration-300 ${
-            knowledgeOpen ? 'w-72' : 'w-0 border-l-0'
+          className={`fixed right-0 top-0 z-30 hidden h-full w-72 border-l bg-background shadow-lg transition-transform duration-300 md:block ${
+            knowledgeOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
         >
-          <div className="flex items-center justify-between border-b px-4 py-3">
-            <span className="text-sm font-semibold whitespace-nowrap">知识库</span>
-            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setKnowledgeOpen(false)}>
-              <X className="h-4 w-4" />
-            </Button>
+          <div className="flex h-full flex-col">
+            <div className="flex items-center justify-between border-b px-4 py-3">
+              <span className="text-sm font-semibold">知识库</span>
+              <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setKnowledgeOpen(false)}>
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+            <KnowledgePanel />
           </div>
-          <KnowledgePanel />
         </div>
       </div>
 
