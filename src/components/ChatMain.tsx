@@ -97,7 +97,7 @@ const sessions = useChatStore((s) => s.sessions)
         <Button
           variant="ghost"
           size="icon"
-          className={`h-8 overflow-hidden transition-all duration-300 ${sidebarCollapsed ? 'w-8' : 'w-0'}`}
+          className={`h-8 overflow-hidden transition-all duration-300 ${sidebarCollapsed ? 'w-8 opacity-100' : 'w-0 opacity-0'}`}
           onClick={onToggleSidebar}
           disabled={!sidebarCollapsed}
         >
