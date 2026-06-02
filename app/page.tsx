@@ -8,7 +8,7 @@ import { useChatStore } from '../src/hooks/useChatStore'
 import { useKnowledgeStore } from '../src/hooks/useKnowledgeStore'
 import { Sheet, SheetContent } from '../src/components/ui/sheet'
 import { Button } from '../src/components/ui/button'
-import { X, PanelLeftClose, PanelLeftOpen } from 'lucide-react'
+import { X } from 'lucide-react'
 
 export default function Home() {
   const initSessions = useChatStore((s) => s.initSessions)
@@ -48,18 +48,6 @@ export default function Home() {
       >
         <ChatSidebar />
       </div>
-
-      {/* Collapsed sidebar toggle button */}
-      {sidebarCollapsed && !isMobile && (
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute left-0 top-3 z-30 h-8 w-8 rounded-l-none border border-l-0"
-          onClick={() => setSidebarCollapsed(false)}
-        >
-          <PanelLeftOpen className="h-4 w-4" />
-        </Button>
-      )}
 
       {/* Mobile Sidebar Overlay */}
       {sidebarMobileOpen && (
