@@ -6,7 +6,7 @@ import { MODEL_OPTIONS } from '../types/chat'
 import { Button } from './ui/button'
 import { ScrollArea } from './ui/scroll-area'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
-import { Plus, Trash2, Sun, Moon, MessageSquare, Sparkles, Menu } from 'lucide-react'
+import { Plus, Trash2, Sun, Moon, MessageSquare, Menu } from 'lucide-react'
 
 export default function ChatSidebar({ onToggleCollapse }: { onToggleCollapse?: () => void }) {
   const sessions = useChatStore((s) => s.sessions)
@@ -25,8 +25,7 @@ export default function ChatSidebar({ onToggleCollapse }: { onToggleCollapse?: (
   return (
     <div className="flex h-full flex-col bg-background">
       <div className="flex items-center gap-2 px-4 py-3">
-        <Sparkles className="h-5 w-5 text-primary" />
-        <span className="flex-1 font-semibold">DeepSeek Chat</span>
+        <div className="flex-1" />
         {onToggleCollapse && (
           <button
             onClick={onToggleCollapse}
