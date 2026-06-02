@@ -6,7 +6,7 @@ import { Button } from './ui/button'
 import { Input } from './ui/input'
 import { ScrollArea } from './ui/scroll-area'
 import {
-  X, Upload, Globe, Trash2, Paperclip, Loader2, AlertCircle, CheckCircle2,
+  Upload, Globe, Trash2, Paperclip, Loader2, AlertCircle, CheckCircle2,
 } from 'lucide-react'
 
 interface Props {
@@ -64,13 +64,6 @@ export default function KnowledgePanel({ onClose }: Props) {
 
   return (
     <div className="flex h-full flex-col bg-background">
-      <div className="flex items-center justify-between border-b px-4 py-3">
-        <span className="text-sm font-semibold">知识库</span>
-        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onClose}>
-          <X className="h-4 w-4" />
-        </Button>
-      </div>
-
       <ScrollArea className="flex-1">
         <div className="space-y-4 p-4">
           {/* Upload */}
@@ -78,7 +71,7 @@ export default function KnowledgePanel({ onClose }: Props) {
             <label className="text-xs font-medium text-muted-foreground">上传文档</label>
             <input ref={fileInputRef} type="file" accept=".txt,.md,.pdf,.json,.csv,.html,.py,.js,.ts,.tsx,.css,.yaml,.yml" onChange={handleFileUpload} className="hidden" disabled={isProcessing} />
             <Button variant="outline" className="w-full gap-2" onClick={() => fileInputRef.current?.click()} disabled={isProcessing}>
-              <Upload className="h-4 w-4" />
+              <Upload className="h-4 w-4 shrink-0" />
               选择文件
             </Button>
             <p className="text-xs text-muted-foreground">TXT, MD, PDF, 代码等</p>
@@ -88,7 +81,7 @@ export default function KnowledgePanel({ onClose }: Props) {
           <div className="space-y-2">
             <label className="text-xs font-medium text-muted-foreground">抓取网页</label>
             <div className="flex gap-2">
-              <Input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://..." className="h-9" disabled={isProcessing} onKeyDown={(e) => e.key === 'Enter' && handleUrlAdd()} />
+              <Input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://..." disabled={isProcessing} onKeyDown={(e) => e.key === 'Enter' && handleUrlAdd()} />
               <Button size="sm" className="shrink-0 gap-1.5" onClick={handleUrlAdd} disabled={isProcessing || !url.trim()}>
                 <Globe className="h-3.5 w-3.5" />
                 抓取
@@ -99,13 +92,13 @@ export default function KnowledgePanel({ onClose }: Props) {
           {/* Status */}
           {isProcessing && (
             <div className="flex items-center gap-2 rounded-md bg-muted px-3 py-2 text-xs">
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              <Loader2 className="h-3.5 w-3.5 animate-spin shrink-0" />
               {processingStatus}
             </div>
           )}
           {statusMsg && (
             <div className={`flex items-center gap-2 rounded-md px-3 py-2 text-xs ${statusType === 'error' ? 'bg-destructive/10 text-destructive' : 'bg-muted'}`}>
-              {statusType === 'error' ? <AlertCircle className="h-3.5 w-3.5" /> : <CheckCircle2 className="h-3.5 w-3.5" />}
+              {statusType === 'error' ? <AlertCircle className="h-3.5 w-3.5 shrink-0" /> : <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />}
               {statusMsg}
             </div>
           )}
