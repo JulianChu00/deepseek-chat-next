@@ -8,7 +8,7 @@ import { useChatStore } from '../src/hooks/useChatStore'
 import { useKnowledgeStore } from '../src/hooks/useKnowledgeStore'
 import { Sheet, SheetContent } from '../src/components/ui/sheet'
 import { Button } from '../src/components/ui/button'
-import { X, PanelLeft } from 'lucide-react'
+import { X } from 'lucide-react'
 
 export default function Home() {
   const initSessions = useChatStore((s) => s.initSessions)
@@ -39,27 +39,19 @@ export default function Home() {
   }, [])
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
-      {/* Desktop Sidebar - slides over chat */}
+    <div className="flex h-screen overflow-hidden">
+      {/* Desktop Sidebar */}
       <div
-        className={`fixed left-0 top-0 z-30 hidden h-full w-64 border-r bg-background shadow-lg transition-transform duration-300 md:block ${
-          sidebarCollapsed ? '-translate-x-full' : 'translate-x-0'
+        className={`hidden md:block shrink-0 overflow-hidden border-r transition-[width] duration-300 ${
+          sidebarCollapsed ? 'w-0 border-r-0' : 'w-64'
         }`}
       >
-        <ChatSidebar onToggleCollapse={toggleDesktopSidebar} />
+        <div className="w-64 h-full">
+          <ChatSidebar onToggleCollapse={toggleDesktopSidebar} />
+        </div>
       </div>
 
-      {/* Expand button when sidebar collapsed */}
-      <Button
-        variant="ghost"
-        size="icon"
-        className={`fixed left-0 top-3 z-20 hidden h-8 w-8 rounded-l-none border border-l-0 bg-background md:flex ${sidebarCollapsed ? '' : 'md:hidden'}`}
-        onClick={() => setSidebarCollapsed(false)}
-      >
-        <PanelLeft className="h-4 w-4" />
-      </Button>
-
-      {/* Mobile Sidebar Overlay */}
+      {/* Mobile Sidebar */}
       {sidebarMobileOpen && (
         <div className="fixed inset-0 z-40 md:hidden">
           <div className="absolute inset-0 bg-black/50" onClick={() => setSidebarMobileOpen(false)} />
@@ -69,24 +61,24 @@ export default function Home() {
         </div>
       )}
 
-      {/* Main Chat */}
-      <div className="flex flex-1 min-w-0 relative">
+      {/* Chat Area */}
+      <div className="flex flex-1 min-w-0">
         <ChatMain
-          sidebarOpen={sidebarMobileOpen}
-          onToggleSidebar={toggleMobileSidebar}
+          sidebarOpen={sidebarMobileOpen || !sidebarCollapsed}
+          onToggleSidebar={isMobile ? toggleMobileSidebar : toggleDesktopSidebar}
           knowledgeOpen={knowledgeOpen}
           onToggleKnowledge={handleKnowledgeToggle}
         />
 
-        {/* Desktop Knowledge Panel - slides over chat */}
+        {/* Desktop Knowledge Panel */}
         <div
-          className={`fixed right-0 top-0 z-30 hidden h-full w-72 border-l bg-background shadow-lg transition-transform duration-300 md:block ${
-            knowledgeOpen ? 'translate-x-0' : 'translate-x-full'
+          className={`hidden md:block shrink-0 overflow-hidden border-l transition-[width] duration-300 ${
+            knowledgeOpen ? 'w-72' : 'w-0 border-l-0'
           }`}
         >
-          <div className="flex h-full flex-col">
-            <div className="flex items-center justify-between border-b px-4 py-3">
-              <span className="text-sm font-semibold">知识库</span>
+          <div className="w-72 h-full flex flex-col bg-background">
+            <div className="flex items-center justify-between border-b px-4 py-3 shrink-0">
+              <span className="text-sm font-semibold whitespace-nowrap">知识库</span>
               <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setKnowledgeOpen(false)}>
                 <X className="h-4 w-4" />
               </Button>
@@ -96,7 +88,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Mobile Sheet */}
+      {/* Mobile Knowledge Sheet */}
       {isMobile && (
         <Sheet open={knowledgeOpen} onOpenChange={setKnowledgeOpen}>
           <SheetContent side="right" className="w-[85vw] p-4">
