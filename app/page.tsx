@@ -8,7 +8,7 @@ import { useChatStore } from '../src/hooks/useChatStore'
 import { useKnowledgeStore } from '../src/hooks/useKnowledgeStore'
 import { Sheet, SheetContent } from '../src/components/ui/sheet'
 import { Button } from '../src/components/ui/button'
-import { X } from 'lucide-react'
+import { X, PanelLeft } from 'lucide-react'
 
 export default function Home() {
   const initSessions = useChatStore((s) => s.initSessions)
@@ -30,13 +30,13 @@ export default function Home() {
     setKnowledgeOpen((prev) => !prev)
   }, [])
 
-  const handleSidebarToggle = useCallback(() => {
-    if (isMobile) {
-      setSidebarMobileOpen((prev) => !prev)
-    } else {
-      setSidebarCollapsed((prev) => !prev)
-    }
-  }, [isMobile])
+  const toggleDesktopSidebar = useCallback(() => {
+    setSidebarCollapsed((prev) => !prev)
+  }, [])
+
+  const toggleMobileSidebar = useCallback(() => {
+    setSidebarMobileOpen((prev) => !prev)
+  }, [])
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
@@ -46,24 +46,34 @@ export default function Home() {
           sidebarCollapsed ? '-translate-x-full' : 'translate-x-0'
         }`}
       >
-        <ChatSidebar />
+        <ChatSidebar onToggleCollapse={toggleDesktopSidebar} />
       </div>
+
+      {/* Expand button when sidebar collapsed */}
+      <Button
+        variant="ghost"
+        size="icon"
+        className={`fixed left-0 top-3 z-20 hidden h-8 w-8 rounded-l-none border border-l-0 bg-background md:flex ${sidebarCollapsed ? '' : 'md:hidden'}`}
+        onClick={() => setSidebarCollapsed(false)}
+      >
+        <PanelLeft className="h-4 w-4" />
+      </Button>
 
       {/* Mobile Sidebar Overlay */}
       {sidebarMobileOpen && (
         <div className="fixed inset-0 z-40 md:hidden">
           <div className="absolute inset-0 bg-black/50" onClick={() => setSidebarMobileOpen(false)} />
           <div className="absolute inset-y-0 left-0 w-72 max-w-[85vw] bg-background shadow-xl">
-            <ChatSidebar />
+            <ChatSidebar onToggleCollapse={() => setSidebarMobileOpen(false)} />
           </div>
         </div>
       )}
 
-      {/* Main Chat - always full width */}
+      {/* Main Chat */}
       <div className="flex flex-1 min-w-0 relative">
         <ChatMain
           sidebarOpen={sidebarMobileOpen}
-          onToggleSidebar={handleSidebarToggle}
+          onToggleSidebar={toggleMobileSidebar}
           knowledgeOpen={knowledgeOpen}
           onToggleKnowledge={handleKnowledgeToggle}
         />
