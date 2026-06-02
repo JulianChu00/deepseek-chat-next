@@ -42,7 +42,7 @@ export default function Home() {
     <div className="flex h-screen overflow-hidden">
       {/* Desktop Sidebar */}
       <div
-        className={`hidden md:block shrink-0 overflow-hidden border-r transition-[width] duration-300 ${
+        className={`hidden md:block shrink-0 overflow-hidden border-r transition-all duration-300 ${
           sidebarCollapsed ? 'w-0 border-r-0' : 'w-64'
         }`}
       >
@@ -62,7 +62,7 @@ export default function Home() {
       )}
 
       {/* Chat Area */}
-      <div className="flex flex-1 min-w-0">
+      <div className="flex flex-1 min-w-0 transition-all duration-300">
         <ChatMain
           sidebarCollapsed={sidebarCollapsed}
           sidebarOpen={sidebarMobileOpen || !sidebarCollapsed}
@@ -73,7 +73,7 @@ export default function Home() {
 
         {/* Desktop Knowledge Panel */}
         <div
-          className={`hidden md:block shrink-0 overflow-hidden border-l transition-[width] duration-300 ${
+          className={`hidden md:block shrink-0 overflow-hidden border-l transition-all duration-300 ${
             knowledgeOpen ? 'w-72' : 'w-0 border-l-0'
           }`}
         >

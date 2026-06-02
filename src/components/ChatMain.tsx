@@ -25,18 +25,7 @@ interface Props {
 }
 
 export default function ChatMain({ sidebarOpen, onToggleSidebar, sidebarCollapsed, knowledgeOpen, onToggleKnowledge }: Props) {
-  const [showHamburger, setShowHamburger] = useState(sidebarCollapsed)
-  
-  useEffect(() => {
-    if (sidebarCollapsed) {
-      const timer = setTimeout(() => setShowHamburger(true), 300)
-      return () => clearTimeout(timer)
-    } else {
-      setShowHamburger(false)
-    }
-  }, [sidebarCollapsed])
-
-  const sessions = useChatStore((s) => s.sessions)
+const sessions = useChatStore((s) => s.sessions)
   const activeSessionId = useChatStore((s) => s.activeSessionId)
   const isStreaming = useChatStore((s) => s.isStreaming)
   const sendMessage = useChatStore((s) => s.sendMessage)
@@ -105,7 +94,7 @@ export default function ChatMain({ sidebarOpen, onToggleSidebar, sidebarCollapse
     <div className="flex flex-1 flex-col min-w-0">
       {/* Top bar */}
       <div className="flex items-center gap-1 border-b px-2 py-1.5 sm:px-4 sm:py-2">
-        {showHamburger && (
+        {sidebarCollapsed && (
           <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onToggleSidebar}>
             <Menu className="h-4 w-4" />
           </Button>
